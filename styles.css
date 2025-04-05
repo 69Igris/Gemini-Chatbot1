@@ -19,13 +19,10 @@
 
 body{
     color: var(--text-color);
-    background: var(--primary-color);
+     background: var(--primary-color);
 }
 .container {
-    overflow-y: auto;
     padding: 32px 0 60px;
-    max-height: calc(100vh - 127px);
-    scrollbar-color: var(--scrollbar-color) transparent ;
 }
 .container :where( .app-header, .message,.suggestions ,.prompt-wrapper,.disclaimer-text){
     margin: 0 auto;
