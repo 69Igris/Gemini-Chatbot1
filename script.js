@@ -1,4 +1,3 @@
-const container = document.querySelector(".container")
 const chatsContainer = document.querySelector(".chats-container")
 const promptForm = document.querySelector(".prompt-form")
 const promptInput = promptForm.querySelector(".prompt-input")
@@ -19,24 +18,6 @@ const createMsgElement = (content,...classes) => {
     return div
 }
 
-const scrollToBottom = ()=>container.scrollTo({top: container.scrollHeight, behavior: "smooth"})
-
-const typingEffect = (text, textElement,botMsgDiv)=>{
-    
-        textElement.textContent=''
-        const words = text.split(' ')
-        let wordIndex = 0
-
-        const typingInterval = setInterval(()=>{
-            if(wordIndex<words.length){
-                textElement.textContent += (wordIndex === 0? '':" ")+ words[wordIndex++]
-                botMsgDiv.classList.remove("loading")
-                scrollToBottom()
-            }else{
-                clearInterval(typingInterval);
-            }
-        },40)
-}
 
 const generateResponse = async (botMsgDiv)=>{
 
@@ -59,8 +40,7 @@ const generateResponse = async (botMsgDiv)=>{
         if(!response.ok) throw new Error(data.error.message);
 
         const responseText = data.candidates[0].content.parts[0].text.replace(/\*\*([^*]+)\*\*/g,'$1').trim();
-        typingEffect(responseText,textElement, botMsgDiv)
-         
+        textElement.textContent = responseText
     }catch(error){
         console.log(error)
     }
@@ -80,7 +60,6 @@ const handleFormSubmit = (e) => {
     const userMsgDiv = createMsgElement(userMsgHTML, "user-message");
     userMsgDiv.querySelector(".message-text").textContent = userMessage
     chatsContainer.appendChild(userMsgDiv);
-    scrollToBottom();
 
     setTimeout(() => {
         // generate user message html and adds in chat container
