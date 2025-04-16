@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <title>Gemini Chatbot</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    
+
     <div class="container">
 
         <header class="app-header">
@@ -22,28 +25,28 @@
                 <p class="text">Design a home office setup for rempte work under $500.</p>
                 <span class="material-symbols-rounded">
                     draw
-                    </span>
+                </span>
             </li>
             <li class="suggestions-items">
                 <p class="text">How can I level up my web development expertise in 2025?</p>
                 <span class="material-symbols-rounded">
                     lightbulb
-                    </span>
-                
+                </span>
+
             </li>
             <li class="suggestions-items">
                 <p class="text">Suggest some usefull tools for debugging Javascript Code.</p>
                 <span class="material-symbols-rounded">
                     explore
-                    </span>
-                
+                </span>
+
             </li>
             <li class="suggestions-items">
                 <p class="text">Create a ReactJS component for a simple to-do-list app.</p>
                 <span class="material-symbols-rounded">
                     code_blocks
-                    </span>
-                
+                </span>
+
             </li>
         </ul>
 
@@ -62,11 +65,21 @@
         <div class="prompt-container">
             <div class="prompt-wrapper">
                 <form action="#" class="prompt-form">
-                    <input type="text" placeholder="Ask Gemini " class="prompt-input" required>
+                    <input type="text" placeholder="Ask Gemini" class="prompt-input" required>
                     <div class="prompt-actions">
-                        <button id="add-file-btn" type="button" class="material-symbols-rounded">
-                            attach_file
-                        </button>
+                        <div class="file-upload-wrapper"> 
+                            <img src="#" alt="" class="file-preview">
+                            <input type="file" accept="image/*, .csv, .txt, .pdf" id="file-input" hidden>
+                            <button   type="button" class="file-icon  material-symbols-rounded">
+                                description
+                            </button>
+                            <button id="add-file-btn" type="button" class="material-symbols-rounded">
+                                attach_file
+                            </button>
+                            <button id="cancel-file-btn" type="button" class="material-symbols-rounded">
+                                close
+                            </button>
+                        </div>
                         <button id="send-prompt-button" class="material-symbols-rounded">arrow_upward</button>
                     </div>
                 </form>
@@ -81,4 +94,5 @@
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
