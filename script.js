@@ -4,14 +4,15 @@ const promptForm = document.querySelector(".prompt-form")
 const promptInput = promptForm.querySelector(".prompt-input")
 const fileInput = promptForm.querySelector("#file-input")
 const fileUploadWrapper = promptForm.querySelector(".file-upload-wrapper")
+const themeToggle = document.querySelector("#theme-toggle-button")
+
 
 
 
 const API_KEY = 'AIzaSyCGp1Jde1Jl9Moi5wVOg2W_Pi328_TxXyg';
-
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`
 
-
+let typingInterval, controller ;
 const chatHistory = [];
 const userData = { message: '', file: {} }
 
@@ -31,12 +32,13 @@ const typingEffect = (text, textElement, botMsgDiv) => {
     const words = text.split(" ")
     let wordIndex = 0
 
-    const typingInterval = setInterval(() => {
+    typingInterval = setInterval(() => {
         if (wordIndex < words.length) {
             textElement.textContent += (wordIndex === 0 ? "" : " ") + words[wordIndex++]
             scrollToBottom()
         } else {
             clearInterval(typingInterval)
+            document.body.classList.add("bot-responding")
             botMsgDiv.classList.remove('loading')
         }
     }, 40)
@@ -44,9 +46,10 @@ const typingEffect = (text, textElement, botMsgDiv) => {
 
 
 
-const generateResponse = async (botMsgDiv) => {
+const generateResponse = async (botMsgDiv) => { 
 
     const textElement = botMsgDiv.querySelector('.message-text')
+    controller = new AbortController()
 
     // Add usermessage to chat history 
     chatHistory.push({
@@ -58,7 +61,8 @@ const generateResponse = async (botMsgDiv) => {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: chatHistory })
+            body: JSON.stringify({ contents: chatHistory }),
+            signal: controller.signal
         })
 
         const data = await response.json();
@@ -72,7 +76,10 @@ const generateResponse = async (botMsgDiv) => {
         console.log(chatHistory)
 
     } catch (error) {
-        console.log(error)
+        textElement.style.color = '#d62939'
+        textElement.textContent = error.name === 'AbortError' ? 'Response Generation Stopped.' : error.message;
+        document.body.classList.add("bot-responding")
+        botMsgDiv.classList.remove('loading')
     } finally {
         userData.file = {}
 
@@ -84,10 +91,11 @@ const generateResponse = async (botMsgDiv) => {
 const handleFormSubmit = (e) => {
     e.preventDefault();
     const userMessage = promptInput.value.trim();
-    if (!userMessage) return;
+    if (!userMessage || document.body.classList.contains("bot-responding")) return;
 
     promptInput.value = ''
     userData.message = userMessage
+    document.body.classList.add("bot-responding", 'chats-active')
     fileUploadWrapper.classList.remove('active', 'img-attached', 'file-attached')
 
 
@@ -132,8 +140,39 @@ fileInput.addEventListener('change', () => {
 document.querySelector('#cancel-file-btn').addEventListener('click', () => {
     userData.file = {}
     fileUploadWrapper.classList.remove('active', 'img-attached', 'file-attached')
+    
 })
 
+document.querySelector('#stop-response-button').addEventListener('click', () => {
+    userData.file = {}
+    controller?.abort()
+    clearInterval(typingInterval) 
+    document.body.classList.remove("bot-responding")
+    chatsContainer.querySelector('.bot-message.loading').classList.remove('loading')
+})
+
+document.querySelector('#delete-chat-button').addEventListener('click', () => {
+    chatHistory.length = 0 
+    chatsContainer.innerHTML = '';
+    document.body.classList.remove("bot-responding", 'chats-active' )
+})
+
+document.querySelectorAll ('.suggestions-items').forEach(item =>{
+    item.addEventListener('click',()=>{
+        promptInput.value = item.querySelector('.text').textContent 
+        promptForm.dispatchEvent(new Event('submit'))
+    })
+})
+
+themeToggle.addEventListener('click', ()=>{
+    const isLightTheme =  document.body.classList.toggle('light-theme')
+    localStorage.setItem('themeColor', isLightTheme ? 'light_mode' : 'dark_mode')
+    themeToggle.textContent = isLightTheme ? 'dark_mode' : 'light_mode'
+})
+
+const isLightTheme =  localStorage.getItem('themeColor') === 'light_mode';
+document.body.classList.toggle('light-theme', isLightTheme)
+themeToggle.textContent = isLightTheme ? 'dark_mode' : 'light_mode';
 
 promptForm.addEventListener("submit", handleFormSubmit)
 promptForm.querySelector('#add-file-btn').addEventListener('click', () => fileInput.click())
